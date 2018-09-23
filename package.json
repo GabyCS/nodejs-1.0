@@ -1,0 +1,27 @@
+{
+  "name": "api_back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabyCS/nodejs-1.0.git"
+  },
+  "keywords": [
+    "api_back"
+  ],
+  "author": "Gabriela Casillas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GabyCS/nodejs-1.0/issues"
+  },
+  "homepage": "https://github.com/GabyCS/nodejs-1.0#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "method-override": "^3.0.0"
+  }
+}
