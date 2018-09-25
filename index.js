@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
+const PORT = process.env.PORT || 8000
 const methodOverride = require('method-override');
 
 let app = express();
@@ -16,8 +18,8 @@ router.get('/',(req, res)=>{
 
 app.use(router);
 
-app.listen(8000, ()=>{
-	console.log("Node server running on 127.0.0.1:8000");
+app.listen(PORT, ()=>{
+	console.log("Node server running on 127.0.0.1:${PORT}");
 })
 
 
