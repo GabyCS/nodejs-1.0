@@ -36,49 +36,42 @@ exports.crearTarea = (datos, callback) => {
 
 exports.actualizarTarea = (datos, callback) => {
 	console.log('llego aqui');
-	if(datos._id){
+	if(datos){
 		let tarea = {
-			nombre:datos.nombre,
-			tiempo_duracion:datos.tiempo_duracion,
-			tiempo_restante:datos.tiempo_restante,
-			tipo_duracion:datos.tipo_duracion,
-			estatus: datos.estatus,
-			descripcion:datos.descripcion
-			
+			'tareas.$.nombre':datos.nombre,
+			'tareas.$.tiempo_duracion':datos.tiempo_duracion,
+			'tareas.$.tiempo_restante':datos.tiempo_restante,
+			'tareas.$.tipo_duracion':datos.tipo_duracion,
+			'tareas.$.estatus': datos.estatus,
+			'tareas.$.descripcion':datos.descripcion
 		}
 		let historial = {
-			'$push':{
-				historial:{
-					_id:new mongoose.Types.ObjectId(),
-					nombre:datos.nombre,
-					tiempo_duracion:datos.tiempo_duracion,
-					tiempo_restante:datos.tiempo_restante,
-					tipo_duracion:datos.tipo_duracion,
-					estatus:datos.status,
-					descripcion:datos.descripcion,
-					accion:'Se actualizó'
-				}
+			'tareas.$.historial':{
+				'_id':new mongoose.Types.ObjectId(),
+				'nombre':datos.nombre,
+				'tiempo_duracion':datos.tiempo_duracion,
+				'tiempo_restante':datos.tiempo_restante,
+				'tipo_duracion':datos.tipo_duracion,
+				'estatus':datos.estatus,
+				'descripcion':datos.descripcion,
+				'accion':'Se actualizó'
 			}
-			
 		}
 
-		let id_tarea = {'$and':[{
-			usuario:datos.user
-			},
-			{
-				'tareas._id':new mongoose.Types.ObjectId(datos.id_tarea)
-			}]
-		};
+		let where = {usuario:datos.user,'tareas._id': mongoose.Types.ObjectId(datos.id_tarea)};
 		let info ={
 			tarea,
 			historial,
-			id_tarea
+			where
 		};
-		console.log(info);
 		tareasModelo.actualizarTarea(info, (err, result) => {
-			console.log(err, result);
-
-			callback(err, result);
+			if(err){console.log(err)};
+			if(result.nModified > 0){
+				callback(err,'Se actualizó el registro');
+			}else{
+				callback(err, 'No hubó actualizaciones');
+			}
+			
 		})
 
 			

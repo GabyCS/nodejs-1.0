@@ -49,9 +49,7 @@ exports.obtenerListadoTareas = (datos, callback) => {
 }
 
 exports.actualizarTarea = (info, callback) => {
-	console.log('entro aqui');
-	coleccion.where(info.id_tarea).update(info.tarea, info.historial).exec((err, result) =>{
-		console.log(err, result);
+	coleccion.updateOne(info.where,{'$set':info.tarea,'$addToSet':info.historial}).exec((err, result) =>{
 		callback(err, result);
 	})
 }
