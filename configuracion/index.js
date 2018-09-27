@@ -14,10 +14,18 @@ module.exports=(function() {
 				},
 				fecha_inicio:{
 					type:Date,
+					required:false
+				},
+				tipo_duracion:{
+					type:String,
 					required:true
 				},
-				fecha_fin:{
-					type:Date,
+				tiempo_duracion:{
+					type:String,
+					required:true
+				},
+				tiempo_restante:{
+					type:String,
 					required:true
 				},
 				estatus:{
@@ -42,10 +50,18 @@ module.exports=(function() {
 						},
 						fecha_inicio:{
 							type:Date,
+							required:false
+						},
+						tipo_duracion:{
+							type:String,
 							required:true
 						},
-						fecha_fin:{
-							type:Date,
+						tiempo_duracion:{
+							type:String,
+							required:true
+						},
+						tiempo_restante:{
+							type:String,
 							required:true
 						},
 						estatus:{

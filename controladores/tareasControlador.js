@@ -2,27 +2,29 @@ const tareasModelo = require('../modelos/tareasModelo.js');
 const mongoose = require('mongoose');
 
 exports.crearTarea = (datos, callback) => {
-	if(datos.usuario && datos.nombre && datos.fecha_inicio && datos.fecha_fin  && datos.descripcion){
+	if(datos.user && datos.nombre && datos.tipo_duracion && datos.tiempo_duracion && datos.tiempo_restante  && datos.descripcion){
 		let tarea = {
 			_id:new mongoose.Types.ObjectId(),
 			nombre:datos.nombre,
-			fecha_inicio: new Date(datos.fecha_inicio),
-			fecha_fin: new Date(datos.fecha_fin),
-			estatus:'En cola',
+			tiempo_duracion:datos.tiempo_duracion,
+			tiempo_restante:datos.tiempo_restante,
+			tipo_duracion:datos.tipo_duracion,
+			estatus:'Eliminada',
 			descripcion:datos.descripcion,
 			historial:[
 				{
 					_id:new mongoose.Types.ObjectId(),
 					nombre:datos.nombre,
-					fecha_inicio: new Date(datos.fecha_inicio),
-					fecha_fin:new Date(datos.fecha_fin),
+					tiempo_duracion:datos.tiempo_duracion,
+					tiempo_restante:datos.tiempo_restante,
+					tipo_duracion:datos.tipo_duracion,
 					estatus:'En cola',
 					descripcion:datos.descripcion,
 					accion:'Se creó una nueva tarea'
 				}
 			]
 		}
-		let usr = {usuario:datos.usuario}
+		let usr = {usuario:datos.user}
 		tareasModelo.crearTarea(tarea, usr, function(err, res) {
 			if(err){console.log(err)};
 			callback(err, res);
@@ -32,6 +34,67 @@ exports.crearTarea = (datos, callback) => {
 	}
 }
 
-exports.modificarTarea = (datos, callback) => {
-	
+exports.actualizarTarea = (datos, callback) => {
+	console.log('llego aqui');
+	if(datos._id){
+		let tarea = {
+			nombre:datos.nombre,
+			tiempo_duracion:datos.tiempo_duracion,
+			tiempo_restante:datos.tiempo_restante,
+			tipo_duracion:datos.tipo_duracion,
+			estatus: datos.estatus,
+			descripcion:datos.descripcion
+			
+		}
+		let historial = {
+			'$push':{
+				historial:{
+					_id:new mongoose.Types.ObjectId(),
+					nombre:datos.nombre,
+					tiempo_duracion:datos.tiempo_duracion,
+					tiempo_restante:datos.tiempo_restante,
+					tipo_duracion:datos.tipo_duracion,
+					estatus:datos.status,
+					descripcion:datos.descripcion,
+					accion:'Se actualizó'
+				}
+			}
+			
+		}
+
+		let id_tarea = {'$and':[{
+			usuario:datos.user
+			},
+			{
+				'tareas._id':new mongoose.Types.ObjectId(datos.id_tarea)
+			}]
+		};
+		let info ={
+			tarea,
+			historial,
+			id_tarea
+		};
+		console.log(info);
+		tareasModelo.actualizarTarea(info, (err, result) => {
+			console.log(err, result);
+
+			callback(err, result);
+		})
+
+			
+	}
+		
+}
+
+exports.eliminarTarea = (datos, callback) => {
+
+}
+
+exports.obtenerListadoTareas = (datos, callback) => {
+	if(datos.user){
+		tareasModelo.obtenerListadoTareas(datos, (err, res) => {
+			if(err){console.log(err)}
+			callback(err, res[0]);
+		})
+	}
 }

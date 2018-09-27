@@ -30,6 +30,8 @@ router.get('/', (req, res)=>{
 	
 });
 
+
+
 router.post('/iniciarSesion', (req, res) => {
 	if(req.body.user){
 		sesionCtrl.obtenerUsuario(req.body.user, (err, user) => {
@@ -53,25 +55,87 @@ router.post('/cerrarSesion', (req, res) => {
 	res.status(200).send('la sesion fue destruida');
 })
 
-router.put('/crearTarea', (req, res) =>{
-	console.log('entro crear');
-	tareasCtrl.crearTarea(req.body, (err, tarea) => {
+router.get('/obtenerListadoTareas', (req, res) => {
+	if(req.headers.authorization){
+		tareasCtrl.obtenerListadoTareas({user:req.headers.authorization}, (err, listado) =>{
+			if(err){
+				res.status(401).send(err);
+			}else{
+				res.status(200).send(listado);
+			}
+		})
+	}else{
+		res.status(403).send('no tienes acceso');
+	}
+})
+
+router.get('/tareas/:id_tarea', (req, res) => {
+	if(req.headers.authorization){
+		tareasCtrl.obtenerTarea(req.params, (err, tarea) => {
+			if(err){
+				res.status(401).send(err);
+			}else{
+				res.status(200).send(tarea);
+			}
+		})
+	}else{
+		res.status(403).send('no tienes acceso');
+	}
+	
+})
+
+router.get('/historial/:id_tarea', (req, res) =>{
+	tareasCtrl.obtenerHistorial(req.params, (err, historial) => {
 		if(err){
-			res.status(401).send('ocurrio un error al crear la tarea');
+			res.status(401).send(err);
 		}else{
-			res.status(200).send('La tarea se creo correctamente');
+			res.status(200).send(historial);
 		}
 	})
 })
 
-router.put('/modificarTarea', (req, res) =>{
-	console.log('entro modificar');
-	res.status(200).send('Se modificó la tarea');
+router.put('/crearTarea', (req, res) =>{
+	if(req.body.user){
+		tareasCtrl.crearTarea(req.body, (err, tarea) => {
+			if(err){
+				res.status(401).send('ocurrio un error al crear la tarea');
+			}else{
+				res.status(200).send('La tarea se creo correctamente');
+			}
+		})
+	}else{
+		res.status(403).send('No tienes acceso');
+	}
+	console.log('entro crear');
+	
+})
+
+router.put('/actualizarTarea', (req, res) =>{
+	if(req.body.user){
+		tareasCtrl.actualizarTarea(req.body, (err, tarea) => {
+			if(err){
+				res.status(401).send('Ocurrio un error al actualizar');
+			}else{
+				res.status(200).send('La tarea se actualizó correctamente');
+			}
+		})
+	}else{
+		res.status(403).send('No tienes acceso');
+	}
 })
 
 router.delete('/eliminarTarea', (req, res) =>{
-	console.log('entro eliminar');
-	res.status(200).send('Se eliminó la tarea');
+	if(req.body.user){
+		tareasCtrl.eliminarTarea(req.body, (err, tarea) => {
+			if(err){
+				res.status(401).send('Ocurrio un error al actualizar');
+			}else{
+				res.status(200).send('La tarea se elimino correctamente');
+			}
+		})
+	}else{
+		res.status(403).send('No tienes acceso');
+	}
 })
 app.use('/',router);
 
