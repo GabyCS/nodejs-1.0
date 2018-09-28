@@ -33,6 +33,10 @@ router.get('/', (req, res)=>{
 
 
 router.post('/iniciarSesion', (req, res) => {
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
 	if(req.body.user){
 		sesionCtrl.obtenerUsuario(req.body.user, (err, user) => {
 			if(err){
@@ -41,7 +45,7 @@ router.post('/iniciarSesion', (req, res) => {
 				console.log(user);
 				req.session.user=user.usuario;
 				console.log(req.session);
-				res.status(200).send({err:false, res:'se inicio correctamente'})
+				res.status(200).send({err:false, res:user.usuario})
 			}
 		})
 	}else{
