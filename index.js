@@ -34,10 +34,6 @@ router.get('/', (req, res)=>{
 
 
 router.post('/iniciarSesion', (req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
 	if(req.body.user){
 		sesionCtrl.obtenerUsuario(req.body.user, (err, user) => {
 			if(user === false || user === null || user === undefined){
@@ -54,10 +50,6 @@ router.post('/iniciarSesion', (req, res) => {
 })
 
 router.post('/cerrarSesion', (req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
 	req.session.destroy();
 	res.status(200).send({err:false, res:'la sesion fue destruida'});
 })
