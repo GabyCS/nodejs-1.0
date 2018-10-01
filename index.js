@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 8000
 const methodOverride = require('method-override');
 const sesionCtrl = require('./controladores/sesionControlador');
 const tareasCtrl = require('./controladores/tareasControlador')
+const cors = require('cors');
 
 let app = express(); 
 app.use(session({
@@ -13,6 +14,7 @@ app.use(session({
 	resave:true,
 	saveUninitialized:true
 }))
+app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(methodOverride());
@@ -21,7 +23,6 @@ app.use(methodOverride());
 let router  = express.Router();
 
 router.get('/', (req, res)=>{
-	console.log(req.session);
 	if(req.session.user){
 		res.status(200).send('Hello World')
 	}else{
@@ -39,12 +40,10 @@ router.post('/iniciarSesion', (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
 	if(req.body.user){
 		sesionCtrl.obtenerUsuario(req.body.user, (err, user) => {
-			if(err){
+			if(user === false || user === null || user === undefined){
 				res.status(401).send({err:'el usuario no existe', res:false});
 			}else{
-				console.log(user);
 				req.session.user=user.usuario;
-				console.log(req.session);
 				res.status(200).send({err:false, res:user.usuario})
 			}
 		})
@@ -55,17 +54,23 @@ router.post('/iniciarSesion', (req, res) => {
 })
 
 router.post('/cerrarSesion', (req, res) => {
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
 	req.session.destroy();
-	res.status(200).send('la sesion fue destruida');
+	res.status(200).send({err:false, res:'la sesion fue destruida'});
 })
 
 router.get('/obtenerListadoTareas', (req, res) => {
+    
+    res.setHeader('mode','no-cors');
 	if(req.headers.authorization){
 		tareasCtrl.obtenerListadoTareas({user:req.headers.authorization}, (err, listado) =>{
 			if(err){
 				res.status(401).send(err);
 			}else{
-				res.status(200).send(listado);
+				res.status(200).send({err:false, res:listado});
 			}
 		})
 	}else{
@@ -75,6 +80,7 @@ router.get('/obtenerListadoTareas', (req, res) => {
 
 router.get('/tareas/:id_tarea', (req, res) => {
 	if(req.headers.authorization){
+
 		tareasCtrl.obtenerTarea(req.params, (err, tarea) => {
 			if(err){
 				res.status(401).send(err);
@@ -99,18 +105,17 @@ router.get('/historial/:id_tarea', (req, res) =>{
 })
 
 router.put('/crearTarea', (req, res) =>{
-	if(req.body.user){
-		tareasCtrl.crearTarea(req.body, (err, tarea) => {
+	if(req.headers.authorization){
+		tareasCtrl.crearTarea(req.body, req.headers.authorization, (err, tarea) => {
 			if(err){
 				res.status(401).send('ocurrio un error al crear la tarea');
 			}else{
-				res.status(200).send('La tarea se creo correctamente');
+				res.status(200).send({err:false,res:'La tarea se creo correctamente'});
 			}
 		})
 	}else{
 		res.status(403).send('No tienes acceso');
 	}
-	console.log('entro crear');
 	
 })
 

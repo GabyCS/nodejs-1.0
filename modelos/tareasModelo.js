@@ -7,17 +7,14 @@ const usuariosModelo = require('./usuariosModelo');
 const coleccion = conn.model('sistema_de_tareas', tareaSchema);
 exports.crearTarea = (tarea, usuario, callback)=>{
 	usuariosModelo.obtenerUsuario(usuario, (err, usr) => {
-		console.log(tarea);
 		if(usr.tareas && usr.tareas.length >= 0){
 			console.log('entro aqui');
 			usr.tareas.push(tarea);
 		}else{
 			usr.tareas = tarea;
 		}
-		console.log(usr);
 		usr.save((err, res) =>{
 			if(err) throw err;
-			console.log('Se agrego la tarea exitosamente');
 			callback(err, res);
 		})
 	} )

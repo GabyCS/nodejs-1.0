@@ -1,15 +1,16 @@
 const tareasModelo = require('../modelos/tareasModelo.js');
 const mongoose = require('mongoose');
 
-exports.crearTarea = (datos, callback) => {
-	if(datos.user && datos.nombre && datos.tipo_duracion && datos.tiempo_duracion && datos.tiempo_restante  && datos.descripcion){
+exports.crearTarea = (datos, user, callback) => {
+	datos = JSON.parse(datos.data);
+	if(user && datos.nombre && datos.tipo_duracion && datos.tiempo_duracion && datos.tiempo_restante  && datos.descripcion){
 		let tarea = {
 			_id:new mongoose.Types.ObjectId(),
 			nombre:datos.nombre,
 			tiempo_duracion:datos.tiempo_duracion,
 			tiempo_restante:datos.tiempo_restante,
 			tipo_duracion:datos.tipo_duracion,
-			estatus:'Eliminada',
+			estatus:'En Cola',
 			descripcion:datos.descripcion,
 			historial:[
 				{
@@ -20,11 +21,11 @@ exports.crearTarea = (datos, callback) => {
 					tipo_duracion:datos.tipo_duracion,
 					estatus:'En cola',
 					descripcion:datos.descripcion,
-					accion:'Se creó una nueva tarea'
+					accion:'Se creó una nueva tarea',
 				}
 			]
 		}
-		let usr = {usuario:datos.user}
+		let usr = {usuario: user}
 		tareasModelo.crearTarea(tarea, usr, function(err, res) {
 			if(err){console.log(err)};
 			callback(err, res);
@@ -35,7 +36,6 @@ exports.crearTarea = (datos, callback) => {
 }
 
 exports.actualizarTarea = (datos, callback) => {
-	console.log('llego aqui');
 	if(datos){
 		let tarea = {
 			'tareas.$.nombre':datos.nombre,
